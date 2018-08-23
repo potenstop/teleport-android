@@ -40,5 +40,5 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:1.1.1-12'
     implementation 'top.potens.jnet:jnet:1.0'
-    implementation 'top.potens.ptchat:ptchat-android:1.0.2'
+    implementation 'top.potens.ptchat:ptchat-android:1.0.3'
 }

@@ -51,9 +51,8 @@ public class IndexActivity extends AppCompatActivity {
     private final Runnable sRunnable = new Runnable() {
         @Override
         public void run() {
-
             RPCHeader rpcHeader = new RPCHeader("getClients", new HashMap<String, String>());
-            XBossUtil.sendRPC(rpcHeader, new RPCCallback<List<Client>>() {
+            XBossUtil.bossClient.sendRPC(rpcHeader, new RPCCallback<List<Client>>() {
                 @Override
                 public void succeed(List<Client> clients) {
                     XGlobalDataUtil.cleanFriendUserBean();

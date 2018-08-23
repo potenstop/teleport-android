@@ -45,7 +45,7 @@ public class XBossUtil {
 
 
     public static BossServer bossServer;
-    public static BossClient bossClient;
+    public static BossClient bossClient = new BossClient();
 
     public static boolean isServer() {
         return bossServer != null;
@@ -174,7 +174,7 @@ public class XBossUtil {
         stringStringHashMap.put("name", DeviceUtil.getDeviceName());
         stringStringHashMap.put("head", head);
         RPCHeader initDeviceInfo = new RPCHeader("_initDeviceInfo", stringStringHashMap);
-        XBossUtil.sendRPC(initDeviceInfo,  new RPCCallback<String>() {
+        bossClient.sendRPC(initDeviceInfo,  new RPCCallback<String>() {
             @Override
             public void succeed(String result) {
                 logger.info("sendDeviceInfo:" + result);
@@ -199,36 +199,12 @@ public class XBossUtil {
         stopJnetBossService();
     }
 
-    public static void sendRPC(final RPCHeader rpcHeader, final RPCCallback rpcCallback) {
-        final String jobID = UUID.randomUUID().toString();
 
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-
-        Runnable runnable = new Runnable() {
-            public void run() {
-                if (bossClient != null && bossClient.getConnectStatus() == BossClient.ConnectStatus.SUCCESS) {
-                    Future future = futures.get(jobID);
-                    if (future != null) future.cancel(true);
-                    bossClient.sendRPC(rpcHeader, rpcCallback);
-                    countDownLatch.countDown();
-                }
-            }
-        };
-
-        // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-        Future future = scheduledExecutor.scheduleAtFixedRate(runnable, 0, 100, TimeUnit.MILLISECONDS);
-        futures.put(jobID, future);
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            logger.error("sendRPC error:", e);
-        }
-    }
 
     // 通用的client变化处理方法
     public static void commonClientChange() {
         RPCHeader rpcHeader = new RPCHeader("getClients", new HashMap<String, String>());
-        XBossUtil.sendRPC(rpcHeader, new RPCCallback<List<Client>>() {
+        bossClient.sendRPC(rpcHeader, new RPCCallback<List<Client>>() {
             @Override
             public void succeed(List<Client> clients) {
                 XGlobalDataUtil.cleanFriendUserBean();
