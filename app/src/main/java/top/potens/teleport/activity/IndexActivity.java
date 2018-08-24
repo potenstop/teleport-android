@@ -55,6 +55,7 @@ public class IndexActivity extends AppCompatActivity {
             XBossUtil.bossClient.sendRPC(rpcHeader, new RPCCallback<List<Client>>() {
                 @Override
                 public void succeed(List<Client> clients) {
+                    logger.debug("=============");
                     XGlobalDataUtil.cleanFriendUserBean();
                     for (Client client : clients) {
                         FriendUserBean friendUserBean = new FriendUserBean(client.getChannelId(), client.getShowName(), HeadMapping.getHead(client.getImage()));

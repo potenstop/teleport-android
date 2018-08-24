@@ -44,12 +44,9 @@ public class XBossUtil {
     private static Map<String, Future> futures = new HashMap<>();
 
 
-    public static BossServer bossServer;
+    public static BossServer bossServer = new BossServer();
     public static BossClient bossClient = new BossClient();
 
-    public static boolean isServer() {
-        return bossServer != null;
-    }
     // 初始化
     public static void init() {
         BroadSocket.setLocalIp(NetworkUtil.getLocalIp(GlobalApplication.getAppContext()));
@@ -97,7 +94,6 @@ public class XBossUtil {
     }
     // 启动boss service
     private static boolean startJnetBossService() {
-        bossServer = new BossServer();
         ChannelFuture channelFuture = bossServer.listenerPort(serverListenerPort).setRPCReqListener(new RpcResponseData()).start();
         try {
             channelFuture.sync();
@@ -118,14 +114,12 @@ public class XBossUtil {
     private static void stopJnetBossService() {
         if (bossServer != null) {
             bossServer.release();
-            bossServer = null;
         }
     }
 
     // 启动boss client
     private static boolean startJnetBossClient(String host) {
         EventServiceData listener = new EventServiceData();
-        bossClient = new BossClient();
 
         bossClient.connect(host, serverListenerPort).addServerEventListener(listener);
 
@@ -190,7 +184,6 @@ public class XBossUtil {
     private static void stopJnetBossClient() {
         if (bossClient != null) {
             bossClient.release();
-            bossClient = null;
         }
     }
 
