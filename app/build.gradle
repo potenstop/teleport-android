@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
         javaCompileOptions {
             annotationProcessorOptions {
                 includeCompileClasspath true
@@ -40,5 +41,5 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:1.1.1-12'
     implementation 'top.potens.jnet:jnet:1.1.1-SNAPSHOT'
-    implementation 'top.potens.ptchat:ptchat-android:1.0.3'
+    implementation 'top.potens.ptchat:ptchat-android:1.0.5'
 }

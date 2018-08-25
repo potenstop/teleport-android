@@ -15,12 +15,20 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import top.potens.jnet.bean.Client;
 import top.potens.jnet.bean.RPCHeader;
 import top.potens.jnet.listener.RPCCallback;
+import top.potens.ptchat.Ptchat;
+import top.potens.ptchat.activity.ChatWindowActivity;
+import top.potens.ptchat.bean.MessageBean;
+import top.potens.ptchat.bean.UserBean;
+import top.potens.ptchat.network.DataInteraction;
+import top.potens.ptchat.network.SendCallback;
 import top.potens.teleport.R;
 import top.potens.teleport.adapter.FriendAdapter;
 import top.potens.teleport.bean.FriendGroupBean;
@@ -28,6 +36,8 @@ import top.potens.teleport.bean.FriendUserBean;
 import top.potens.teleport.constant.HandlerCode;
 import top.potens.teleport.constant.HeadMapping;
 import top.potens.teleport.data.FriendData;
+import top.potens.teleport.engine.ChatGlide4Engine;
+import top.potens.teleport.engine.MatisseGlide4Engine;
 import top.potens.teleport.util.XBossUtil;
 import top.potens.teleport.util.XGlobalDataUtil;
 
@@ -104,18 +114,48 @@ public class IndexActivity extends AppCompatActivity {
         }
     }
     private void setClick() {
-        /*elv_user_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        elv_user_list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Intent intent = new Intent(IndexActivity.this.mContext, ChatWindowActivity.class);
+                /*Intent intent = new Intent(IndexActivity.this.mContext, ChatWindowActivity.class);
                 FriendUserBean friendUserBean = mFriends.get(groupPosition).getFriendUserBeans().get(childPosition);
                 Bundle bundle=new Bundle();
                 bundle.putSerializable("userInfo",friendUserBean);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivity(intent);*/
+                FriendUserBean friendUserBean = mFriends.get(groupPosition).getFriendUserBeans().get(childPosition);
+                final UserBean userBean = new UserBean(1, "http://img.zcool.cn/community/01d881579dc3620000018c1b430c4b.JPG@3000w_1l_2o_100sh.jpg", "abc");
+                final Ptchat ptchat = Ptchat.from(IndexActivity.this)
+                        .userInfo(userBean)
+                        .matisseImageEngine(new MatisseGlide4Engine())
+                        .chatImageEngine(new ChatGlide4Engine())
+                        .dataStrategy(new DataInteraction() {
+                            @Override
+                            public List<MessageBean> initData() {
+                                ArrayList<MessageBean> messageBeans = new ArrayList<>();
+                               /* MessageBean messageBean = new MessageBean();
+                                messageBean.setLocation(MessageBean.LOCATION_RIGHT);
+                                messageBean.setType(MessageBean.TYPE_TEXT);
+                                messageBean.setContent("111111");
+                                messageBean.setUserBean(userBean);
+                                messageBean.setSendId("111");
+                                messageBean.setReceiveId("111");
+                                messageBean.setCreateTime(new Date().getTime());
+
+                                messageBeans.add(messageBean);*/
+                                return messageBeans;
+                            }
+
+                            @Override
+                            public void sendData(MessageBean messageBean, SendCallback sendCallback) {
+                                sendCallback.success();
+                            }
+                        })
+                        .forResult(1);
+
                 return true;
             }
-        });*/
+        });
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +164,13 @@ public class IndexActivity extends AppCompatActivity {
         mContext = getApplicationContext();
         elv_user_list = findViewById(R.id.elv_user_list);
         mHandler.post(sRunnable);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
     }
 
 }

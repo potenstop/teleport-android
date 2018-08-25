@@ -39,7 +39,6 @@ import top.potens.teleport.util.XBossUtil;
  */
 
 public class GlobalApplication extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(GlobalApplication.class);
     private static Context mContext;
 
     public static Context getAppContext() {
@@ -51,7 +50,6 @@ public class GlobalApplication extends Application {
         super.onCreate();
         // 获取Context
         mContext = getApplicationContext();
-        XBossUtil.init();
     }
 
 

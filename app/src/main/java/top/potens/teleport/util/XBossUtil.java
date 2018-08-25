@@ -46,9 +46,11 @@ public class XBossUtil {
 
     public static BossServer bossServer = new BossServer();
     public static BossClient bossClient = new BossClient();
+    public static InitConnectionCallback mConnectionCallback;
 
     // 初始化
-    public static void init() {
+    public static void init(InitConnectionCallback connectionCallback) {
+        mConnectionCallback = connectionCallback;
         BroadSocket.setLocalIp(NetworkUtil.getLocalIp(GlobalApplication.getAppContext()));
         new Thread(new Runnable() {
             @Override
@@ -92,6 +94,7 @@ public class XBossUtil {
             }
         }).start();
     }
+
     // 启动boss service
     private static boolean startJnetBossService() {
         ChannelFuture channelFuture = bossServer.listenerPort(serverListenerPort).setRPCReqListener(new RpcResponseData()).start();
@@ -168,9 +171,11 @@ public class XBossUtil {
         stringStringHashMap.put("name", DeviceUtil.getDeviceName());
         stringStringHashMap.put("head", head);
         RPCHeader initDeviceInfo = new RPCHeader("_initDeviceInfo", stringStringHashMap);
-        bossClient.sendRPC(initDeviceInfo,  new RPCCallback<String>() {
+        bossClient.sendRPC(initDeviceInfo, new RPCCallback<String>() {
             @Override
             public void succeed(String result) {
+                if (mConnectionCallback != null) mConnectionCallback.operationComplete();
+                mConnectionCallback = null;
                 logger.info("sendDeviceInfo:" + result);
             }
 
@@ -193,7 +198,6 @@ public class XBossUtil {
     }
 
 
-
     // 通用的client变化处理方法
     public static void commonClientChange() {
         RPCHeader rpcHeader = new RPCHeader("getClients", new HashMap<String, String>());
@@ -210,9 +214,13 @@ public class XBossUtil {
 
             @Override
             public void error(String s) {
-                logger.error("rpc error "+s);
+                logger.error("rpc error " + s);
             }
         });
+    }
+
+    public interface InitConnectionCallback {
+        public void operationComplete();
     }
 
 }
