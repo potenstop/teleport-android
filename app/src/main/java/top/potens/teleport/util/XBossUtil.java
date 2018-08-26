@@ -40,9 +40,6 @@ public class XBossUtil {
     private static final Logger logger = LoggerFactory.getLogger(XBossUtil.class);
 
     private static final int serverListenerPort = 31415;
-    private static ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-    private static Map<String, Future> futures = new HashMap<>();
-
 
     public static BossServer bossServer = new BossServer();
     public static BossClient bossClient = new BossClient();

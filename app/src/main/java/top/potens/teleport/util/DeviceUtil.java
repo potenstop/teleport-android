@@ -21,6 +21,8 @@ public class DeviceUtil {
      */
     public static String getDeviceName(){
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        return bluetoothAdapter.getName();
+        if (bluetoothAdapter != null) return bluetoothAdapter.getName();
+        else return null;
+
     }
 }

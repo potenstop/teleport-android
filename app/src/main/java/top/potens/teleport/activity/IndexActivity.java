@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.ref.WeakReference;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,7 +23,6 @@ import top.potens.jnet.bean.Client;
 import top.potens.jnet.bean.RPCHeader;
 import top.potens.jnet.listener.RPCCallback;
 import top.potens.ptchat.Ptchat;
-import top.potens.ptchat.activity.ChatWindowActivity;
 import top.potens.ptchat.bean.MessageBean;
 import top.potens.ptchat.bean.UserBean;
 import top.potens.ptchat.network.DataInteraction;
@@ -38,6 +36,7 @@ import top.potens.teleport.constant.HeadMapping;
 import top.potens.teleport.data.FriendData;
 import top.potens.teleport.engine.ChatGlide4Engine;
 import top.potens.teleport.engine.MatisseGlide4Engine;
+import top.potens.teleport.util.TypeConvert;
 import top.potens.teleport.util.XBossUtil;
 import top.potens.teleport.util.XGlobalDataUtil;
 
@@ -62,10 +61,11 @@ public class IndexActivity extends AppCompatActivity {
         @Override
         public void run() {
             RPCHeader rpcHeader = new RPCHeader("getClients", new HashMap<String, String>());
+            logger.debug("sendRPC/getClients: start");
             XBossUtil.bossClient.sendRPC(rpcHeader, new RPCCallback<List<Client>>() {
                 @Override
                 public void succeed(List<Client> clients) {
-                    logger.debug("=============");
+                    logger.debug("sendRPC/getClients: succeed, clients=" + clients.toString());
                     XGlobalDataUtil.cleanFriendUserBean();
                     for (Client client : clients) {
                         FriendUserBean friendUserBean = new FriendUserBean(client.getChannelId(), client.getShowName(), HeadMapping.getHead(client.getImage()));
@@ -124,7 +124,8 @@ public class IndexActivity extends AppCompatActivity {
                 intent.putExtras(bundle);
                 startActivity(intent);*/
                 FriendUserBean friendUserBean = mFriends.get(groupPosition).getFriendUserBeans().get(childPosition);
-                final UserBean userBean = new UserBean(1, "http://img.zcool.cn/community/01d881579dc3620000018c1b430c4b.JPG@3000w_1l_2o_100sh.jpg", "abc");
+                String resourcesUri = TypeConvert.getResourcesUri(mContext, friendUserBean.getHead());
+                final UserBean userBean = new UserBean(1, resourcesUri, "abc");
                 final Ptchat ptchat = Ptchat.from(IndexActivity.this)
                         .userInfo(userBean)
                         .matisseImageEngine(new MatisseGlide4Engine())
@@ -157,6 +158,7 @@ public class IndexActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">传送</string>
+    <string name="app_name">teleport</string>
     <string name="triangle">小三角</string>
     <string name="designation">名称</string>
 
